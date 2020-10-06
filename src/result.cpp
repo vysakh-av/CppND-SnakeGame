@@ -32,6 +32,7 @@ void Result::AddResult() {
     } else {
       resultFile << "Name" << std::setw(10) << "Country" << std::setw(10)
                  << "Points" << std::setw(10) << "\n";
+      resultFile << "======================================================================== \n";
       resultFile << _player->GetPlayerName() << std::setw(10)
                  << _player->GetPlayerCountry() << std::setw(10)
                  << _player->GetPlayerScore() << "\n";
@@ -44,8 +45,6 @@ void Result::AddResult() {
     if (!resultFile) {
       std::cout << "Failed to open file \n";
     } else {
-      resultFile << "Name" << std::setw(10) << "Country" << std::setw(10)
-                 << "Points" << std::setw(10) << "\n";
       resultFile << _player->GetPlayerName() << std::setw(10)
                  << _player->GetPlayerCountry() << std::setw(10)
                  << _player->GetPlayerScore() << "\n";
@@ -60,9 +59,11 @@ void Result::PrintResult() {
   std::string line;
   std::ifstream resultFile(_gameResultFile);
   if (resultFile.is_open()) {
+    std::cout << "=========SNKE GAME - RESULTS==========================\n";
     while (std::getline(resultFile, line)) {
-      std::cout << line;
+      std::cout << line << std::endl;
     }
+    std::cout << "====================================================\n\n";
     resultFile.close();
     fileLock.unlock();
   } else {
@@ -72,5 +73,5 @@ void Result::PrintResult() {
 }
 
 std::shared_ptr<Player> Result::GetCurrentPlayer() {
-  return std::move(_player);
+  return _player;
 }

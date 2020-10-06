@@ -29,7 +29,7 @@ static void RunGame() {
   std::future<std::string> ftrName = prms.get_future();
   std::thread getNameThread(GetPlayerNameFromConsole, std::move(prms));
 
-  auto status = ftrName.wait_for(std::chrono::milliseconds(1000));
+  auto status = ftrName.wait_for(std::chrono::milliseconds(10000));
   if (status == std::future_status::ready)  // result is ready
   {
     // set player name
@@ -40,17 +40,16 @@ static void RunGame() {
     std::cout << "User not eneterd his name \n";
     result.GetCurrentPlayer()->SetPlayerName("Unknown");
   }
-
   // Read country name - Use a aync task to read it.
   std::future<std::string> ftrCountry =
       std::async(std::launch::async, GetPlayerCountryFromConsole);
-  status = ftrCountry.wait_for(std::chrono::milliseconds(1000));
+  status = ftrCountry.wait_for(std::chrono::milliseconds(10000));
   if (status == std::future_status::ready)  // result is ready
   {
     // set player country name
     result.GetCurrentPlayer()->SetPlayerCountry(ftrCountry.get());
-    std::cout << "Player name = "
-              << result.GetCurrentPlayer()->GetPlayerCountry() << std::endl;
+    std::cout << "Player country name = "
+             << result.GetCurrentPlayer()->GetPlayerCountry() << std::endl;
   } else {
     std::cout << "User not eneterd his name \n";
     result.GetCurrentPlayer()->SetPlayerCountry("Unknown");
@@ -75,6 +74,7 @@ static void RunGame() {
   std::cout << "Game has terminated successfully!\n";
   std::cout << "Score: " << game.GetScore() << "\n";
   std::cout << "Size: " << game.GetSize() << "\n";
+  getNameThread.join();
 }
 
 int main() {
@@ -84,20 +84,24 @@ int main() {
     menu.ShowMenu();
     int opt = menu.getOption();
     switch (opt) {
-      case MenuOption::START: {
+      case START: {
         break;
       }
-      case MenuOption::STATS: {
+      case STATS: {
         result.PrintResult();
         continue;
       }
-      case MenuOption::QUIT: {
+      default:
+      case QUIT: {
         std::cout << "End game \n";
         exit(1);
       }
     }
 
-    RunGame();
+    /* Span a thread and start the game. */
+    std::thread gameThread(RunGame); 
+    gameThread.join ();
+    //RunGame();
   }
   return 0;
 }

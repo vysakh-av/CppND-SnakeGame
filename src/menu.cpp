@@ -13,20 +13,7 @@ void Menu::ShowMenu() {
             << "3. Quit Game \n"
             << "=================================\n";
   std::cout << "Please enter one of the options from menu: \t";
-  while (std::cin >> opt) {
-    if (opt == MenuOption::START || opt == MenuOption::STATS ||
-        opt == MenuOption::QUIT) {
-      std::cout << "Invalid option: Please select option from 1-3 \n";
-    } else {
-      break;
-    }
-  }
-
-  if (std::cin.fail()) {
-    std::cout
-        << "Looks like  we have received a wrong input from user, exit \n";
-    opt = MenuOption::QUIT;
-  }
+  std::cin >> opt;
 
   // Set option value.
   _userOption = std::move(opt);
